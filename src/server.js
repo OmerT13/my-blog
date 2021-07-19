@@ -1,6 +1,7 @@
 import express from "express";
 import { restart } from "nodemon";
 import { MongoClient } from "mongodb";
+import path from 'path';
 
 /* 
 Was initially used to parse the body but is now deprecated.
@@ -9,6 +10,7 @@ import bodyParser from "body-parser";
  */
 
 const app = express();
+app.use(express.static(path.join(__dirname,'/build')));
 app.use(express.json());
 
 const withDB = async (operations, res) => {
@@ -71,5 +73,9 @@ app.post('/api/articles/:name/add-comment',(req, res) => {
         res.status(200).json(updatedArticleInfo);
     }, res);
 });
+
+app.get('*',(req,res) => {
+    res.sendFile(path.join(__dirname+'/build/index.html'));
+})
 
 app.listen(8000,() => console.log('Server is listening on port 8000'));
